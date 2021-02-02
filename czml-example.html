@@ -11,7 +11,7 @@
 <script>
   // Your access token can be found at: https://cesium.com/ion/tokens.
   //Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIxYmE2ODA5Yy1kOTQ5LTQ3ODktYjc2ZC1kM2MzODU4ZWNiYzUiLCJpZCI6Mjc5MzUsInNjb3BlcyI6WyJhc3IiLCJnYyJdLCJpYXQiOjE1OTAzOTUyMzh9.ExrLyK5nfnMfK2r-coVtvv7UFHCLVqKc_9Kyrdm4TMw';
-  Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIyMGRhZjhhMy03NmM3LTQ3MWYtYTg1OC1iMjU4MTMzMjM4MWUiLCJpZCI6Mjc5MzUsInNjb3BlcyI6WyJhc2wiLCJhc3IiLCJhc3ciLCJnYyIsInByIl0sImlhdCI6MTU5MDM5NTMxMn0.yfMR-MIKAS1WHrX9o0ODwmjDxtpHDf125aahm3yOPFU';
+  /*Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIyMGRhZjhhMy03NmM3LTQ3MWYtYTg1OC1iMjU4MTMzMjM4MWUiLCJpZCI6Mjc5MzUsInNjb3BlcyI6WyJhc2wiLCJhc3IiLCJhc3ciLCJnYyIsInByIl0sImlhdCI6MTU5MDM5NTMxMn0.yfMR-MIKAS1WHrX9o0ODwmjDxtpHDf125aahm3yOPFU';*/
   // Initialize the Cesium Viewer in the HTML element with the `cesiumContainer` ID.
   const viewer = new Cesium.Viewer('cesiumContainer', {
     terrainProvider: Cesium.createWorldTerrain()
@@ -48,8 +48,8 @@
   ///////////////////////////////////////
   var tileset = scene.primitives.add(
     new Cesium.Cesium3DTileset({
-      //url: Cesium.IonResource.fromAssetId(40866),
-      url: Cesium.IonResource.fromAssetId(96188)
+      url: Cesium.IonResource.fromAssetId(40866),
+      /*url: Cesium.IonResource.fromAssetId(96188)*/
     })
   );
 
