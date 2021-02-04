@@ -16,21 +16,148 @@
   const viewer = new Cesium.Viewer('cesiumContainer', {
     terrainProvider: Cesium.createWorldTerrain()
   });
-
   var scene = viewer.scene;
-  var clock = viewer.clock;
 
+  /////////////
   var entity;
   var positionProperty;
   var dataSourcePromise = Cesium.CzmlDataSource.load(
     "SampleData/ClampToGround.czml"
   );
-
   viewer.dataSources.add(dataSourcePromise).then(function (dataSource) {
     entity = dataSource.entities.getById("CesiumMilkTruck");
     positionProperty = entity.position;
   });
 
+  //////////// Simple example ////////////
+  var property = new Cesium.SampledProperty(Cesium.Cartesian2);
+
+  //Populate it with data
+  property.addSample(Cesium.JulianDate.fromIso8601('2012-08-01T00:00:00.00Z'), new Cesium.Cartesian2(0, 0));
+  property.addSample(Cesium.JulianDate.fromIso8601('2012-08-02T00:00:00.00Z'), new Cesium.Cartesian2(4, 7));
+
+  //Retrieve an interpolated value
+  var result = property.getValue(Cesium.JulianDate.fromIso8601('2012-08-01T12:00:00.00Z'));
+  console.log('!!!!!!!!!!!!!!!!', result);
+  //////////// end Simple example ////////////
+
+  //// Animation data
+  let time_str_start = "2018-07-19T15:18:00Z";
+  let time_points_time = [0, 0, 10, 15, 20, 25, 30];
+  let vals_points = [0, 70, 150, 70, 150, 70, 150];
+
+  let x = 1216348.1632364073;
+  let y = -4736348.958775471;
+  let z = 4081284.5528982095;
+
+  let vals_coords_points = [
+    new Cesium.Cartesian3(
+            0,
+            0,
+            0
+    ),
+    /*new Cesium.Cartesian3(
+            x,
+            y,
+            z
+    ),*/
+          // 1
+    new Cesium.Cartesian3(
+            x,
+            y,
+            z
+    ),
+          // 2
+    new Cesium.Cartesian3(
+            x + 5,
+            y,
+            z
+    ),
+          // 3
+    new Cesium.Cartesian3(
+            x + 10,
+            y,
+            z
+    ),
+          // 4
+    new Cesium.Cartesian3(
+            x + 15,
+            y,
+            z
+    ),
+          // 5
+    new Cesium.Cartesian3(
+            x + 20,
+            y,
+            z
+    ),
+          // 6
+    new Cesium.Cartesian3(
+            x + 25,
+            y,
+            z
+    )
+  ];
+  //// end Animation data
+
+  //// Times
+  let _my_start_pre = Cesium.JulianDate.fromIso8601(time_str_start);
+  var _my_start = Cesium.JulianDate.addSeconds(_my_start_pre, time_points_time[0], new Cesium.JulianDate());
+  var _my_stop = Cesium.JulianDate.addSeconds(
+          _my_start, time_points_time[time_points_time.length - 1], new Cesium.JulianDate());
+
+  //// Clock
+  var clock = viewer.clock;
+  clock.startTime = _my_start;
+  clock.currentTime = _my_start;
+  clock.stopTime = _my_stop;
+  clock.clockRange = Cesium.ClockRange.LOOP_STOP;
+
+  //// Populate time_points
+  let time_points = [_my_start];
+  for(let i = 1; i < time_points_time.length - 1; ++i) {
+    let val = time_points_time[i];
+    time_points.push(Cesium.JulianDate.addSeconds(_my_start, val, new Cesium.JulianDate()));
+  }
+  time_points.push(_my_stop);
+  //// end Populate time_points
+
+  //// Defining SampledProperty instance
+  var pulseProperty = new Cesium.SampledProperty(Number);
+  for(let i = 1; i < vals_points.length; ++i) {
+    pulseProperty.addSample(time_points[i], vals_points[i]);
+  }
+  //// end Defining SampledProperty instance
+
+  //// Other SampledProperty instance
+  var pulseCoordsProperty = new Cesium.SampledProperty(Cesium.Cartesian3);
+  pulseCoordsProperty.setInterpolationOptions({
+      interpolationDegree : 3,
+      interpolationAlgorithm : Cesium.HermitePolynomialApproximation
+    });
+  for(let i = 1; i < vals_coords_points.length; ++i) {
+    pulseCoordsProperty.addSample(time_points[i], vals_coords_points[i]);
+  }
+  //// end Other SampledProperty instance
+
+  //// Added point
+  viewer.entities.add({
+    position: pulseCoordsProperty,
+    /*position : new Cesium.Cartesian3(
+            1216348.1632364073,
+            -4736348.958775471,
+            4081284.5528982095
+    ),*/
+    point : {
+      //pixelSize : 15,
+      pixelSize: pulseProperty,
+      color : Cesium.Color.RED,
+      outlineWidth: 0
+    }
+  });
+  //// end Added point
+
+//////////////////////////////////////////////////
   viewer.camera.setView({
     destination: new Cesium.Cartesian3(
       1216403.8845586285,
