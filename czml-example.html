@@ -103,15 +103,20 @@
   //// Times
   let _my_start_pre = Cesium.JulianDate.fromIso8601(time_str_start);
   var _my_start = Cesium.JulianDate.addSeconds(_my_start_pre, time_points_time[0], new Cesium.JulianDate());
+  /*var _my_start2 = Cesium.JulianDate.addSeconds(_my_start_pre, 20, new Cesium.JulianDate());*/
   var _my_stop = Cesium.JulianDate.addSeconds(
           _my_start, time_points_time[time_points_time.length - 1], new Cesium.JulianDate());
 
   //// Clock
   var clock = viewer.clock;
-  clock.startTime = _my_start;
-  clock.currentTime = _my_start;
-  clock.stopTime = _my_stop;
-  clock.clockRange = Cesium.ClockRange.LOOP_STOP;
+  /*clock.startTime = _my_start;*/
+  /*clock.currentTime = _my_start;*/
+  /*clock.currentTime = _my_start2;*/
+  /*clock.stopTime = _my_stop;*/
+  /*clock.clockRange = Cesium.ClockRange.LOOP_STOP;*/
+  /*clock.clockRange = Cesium.ClockRange.CLAMPED;*/
+  /*clock.clockRange = Cesium.ClockRange.UNBOUNDED;*/
+  //clock.shouldAnimate = true;
 
   //// Populate time_points
   let time_points = [_my_start];
@@ -173,12 +178,13 @@
   });
 
   ///////////////////////////////////////
-  var tileset = scene.primitives.add(
-    new Cesium.Cesium3DTileset({
-      url: Cesium.IonResource.fromAssetId(40866),
-      /*url: Cesium.IonResource.fromAssetId(96188)*/
-    })
-  );
+  let ionResource = Cesium.IonResource.fromAssetId(40866);
+
+  var tileset = new Cesium.Cesium3DTileset({
+    url: ionResource
+    /*url: Cesium.IonResource.fromAssetId(96188)*/
+  });
+  scene.primitives.add(tileset);
 
   if (scene.clampToHeightSupported) {
     tileset.initialTilesLoaded.addEventListener(start);
@@ -188,9 +194,12 @@
 
   function start() {
     clock.shouldAnimate = true;
-    var objectsToExclude = [entity];
+
+    let objectsToExclude = [entity];
     scene.postRender.addEventListener(function () {
-      var position = positionProperty.getValue(clock.currentTime);
+      // Get new position by time (with activated animation)
+      let position = positionProperty.getValue(clock.currentTime);
+      // Correct position with high
       entity.position = scene.clampToHeight(position, objectsToExclude);
     });
   }
